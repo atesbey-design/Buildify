@@ -1,55 +1,63 @@
-
-"use client"
+"use client";
+import Builder from "@/components/Builder";
+import { setPrompt } from "@/store/Slice/PromptSlice";
 import { motion, useAnimationControls } from "framer-motion";
-import { useState } from "react";
+
+import { createContext, useContext, useState } from 'react';
+import { useAppContext } from "./context";
+import Button from "@/components/Button";
+
 
 
 const variants = {
   initial: { opacity: 0, y: "50%" },
   animate: { opacity: 1, y: "0%" },
-  exit: { opacity: 0, y: "-50%" },
-  visible: { opacity: 0, y: "-50%" ,DelayNode:1},
+  exit: { opacity: 1, y: "100%" },
+
+  visible: { opacity: 0, y: "-50%" },
 };
 
 
 
 
 const App = () => {
-  
+  const {data, setData} = useAppContext();
+
 
   const [inputValue, setInputValue] = useState("");
   const [isVisible, setIsVisible] = useState(false);
 
+
   const [isLoading, setIsLoading] = useState(false);
-const controls = useAnimationControls();
+  const controls = useAnimationControls();
 
 
 
 
-
-  
-
-  const handleInputChange = (event:any) => {
+  const handleInputChange = (event: any) => {
     setInputValue(event.target.value);
   };
 
   const handleCreate = () => {
-
-
     console.log("create with input value:", inputValue);
+    setIsVisible(true);
     setIsLoading(true);
 
+
+      setData(inputValue);
     //api call here
 
-
-
-    setIsVisible(true)
-    controls.start('visible');
+   
+    controls.start(variants.visible);
   };
 
 
+  console.log("prompt", data);
+  
 
 
+
+  
 
   return (
     <motion.div
@@ -59,59 +67,49 @@ const controls = useAnimationControls();
       variants={variants}
       className="w-full h-full justify-center items-center flex text-center flex-col space-y-16 bg-[#060517]"
     >
-     {!isVisible?
-            <div className="flex flex-col space-y-2">
+      {!isVisible ? (
+        <div className="flex flex-col space-y-2">
+          <motion.p
+            variants={variants}
+            transition={{ delay: 1 }}
+            className="text-xl text-[#CCBDEF] font-light"
+          >
+            Design and edit your own components and interact with them
+            instantly.
+          </motion.p>
+          <motion.h1
+            variants={variants}
+            transition={{ delay: 1.8 }}
+            className="text-5xl text-white font-bold"
+          >
+            Turn your dream into reality in a <br /> few clicks.
+          </motion.h1>
+        </div>
+      ) : (
+        <>
+          {isLoading ? (
             <motion.p
               variants={variants}
               transition={{ delay: 1 }}
               className="text-xl text-[#CCBDEF] font-light"
             >
-              Design and edit your own components and interact with them instantly.
+              <Builder prompt={prompt} />
             </motion.p>
-            <motion.h1
-              variants={variants}
-              transition={{ delay: 1.8 }}
-              className="text-5xl text-white font-bold"
-            >
-              Turn your dream into reality in a <br /> few clicks.
-            </motion.h1>
-          </div>:<>
-              {
-                isLoading?
-                <motion.p
-                variants={variants}
-                transition={{ delay: 1 }}
-                className="text-xl text-[#CCBDEF] font-light"
-              >
-                Loading...
-              </motion.p>: null
-              }
-
-            </>
-      
-    }
+          ) : null}
+        </>
+      )}
 
       <motion.div
         variants={variants}
-        transition={{ delay: 2.6 }}
-
-        animate={controls}
+        transition={
+          isVisible
+            ? { delay: 0.5, duration: 0.5 }
+            : { delay: 2.6 }
+        }
+        animate={isVisible ? variants.exit : variants.animate}
         className="flex justify-between items-center flex-row border border-[#5B2ACC] rounded-sm"
       >
-        <input
-          type="text"
-          placeholder="make a blue navbar"
-          value={inputValue}
-          onChange={handleInputChange}
-          className="bg-transparent text-white p-6 text-center font-thin placeholder:font-extralight w-[520px] h-[52px] placeholder-center placeholder:text-slate-600 text-lg focus:outline-none"
-        />
-        <button
-          className="text-white p-2 bg-[#5B2ACC] w-40 h-[52px] focus:outline-none active:outline-none hover:bg-[#7C3AED]"
-
-          onClick={()=>handleCreate()}
-        >
-          Create
-        </button>
+        <Button />
       </motion.div>
     </motion.div>
   );

@@ -15,9 +15,12 @@ import {
   amethyst,
 } from "@codesandbox/sandpack-themes";
 
-const Builder = () => {
+const Builder = (code : any) => {
+
+  console.log("builder code", code);
+  
   const [reactCode, setReactCode] = useState(`import React from "react";
-import Button from "./Button";
+
 
 export default function Navbar() {
   return (
@@ -40,7 +43,7 @@ export default function Navbar() {
               Contact
             </a>
           </div>
-          <Button />
+        
         </div>
       </div>
     </nav>
@@ -58,24 +61,45 @@ export default function Navbar() {
   }`
   );
   return (
-    <div>
-      <SandpackProvider
-        template="react"
-        options={{
-          externalResources: ["https://cdn.tailwindcss.com"],
-        }}
-        files={{
-          "/App.js": reactCode,
-          "/Button.js": buttonCode,
-        }}
-        theme={amethyst}
-      >
-        <SandpackLayout>
-          <SandpackFileExplorer />
-          <SandpackCodeEditor />
-          <SandpackPreview />
-        </SandpackLayout>
-      </SandpackProvider>
+    <div
+        className="w-full h-full bg-[#060517] flex justify-center items-center"
+    >
+
+      
+      <Sandpack
+          options={{
+            showLineNumbers: false, // default - true
+            showInlineErrors: true, // default - false
+            wrapContent: true, // default - false
+            editorHeight: 420, // default - 300
+            editorWidthPercentage: 40, // default - 50
+
+
+            autoReload: true, // default - false
+            autorun: true, // default - false
+
+            externalResources: ["https://cdn.tailwindcss.com"]
+            
+              
+            
+          }}
+          template="react"
+          theme={amethyst}
+        
+
+          files={{
+            "App.js": {
+              code: code.code,
+
+              language: "javascript",
+
+            }
+          }}
+
+          
+
+          
+      />
     </div>
   );
 };
